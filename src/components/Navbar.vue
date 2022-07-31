@@ -29,6 +29,18 @@
         <v-spacer />
       </v-row>
       <v-spacer />
+      <router-link to="/" v-show="isLoggedIn">
+        <div class="mx-2">
+          <v-icon color="white">mdi-heart</v-icon>
+          <v-btn
+            class="white--text font-weight-bold btn-counter-cart-lg"
+            color="orange"
+            fab
+            >0</v-btn
+          >
+        </div>
+      </router-link>
+
       <router-link to="/">
         <div class="mx-2">
           <v-icon color="white">mdi-cart</v-icon>
@@ -40,9 +52,34 @@
           >
         </div>
       </router-link>
-      <router-link to="/login">
+      <router-link to="/login" v-show="!isLoggedIn">
         <span class="mx-2 white--text font-weight-bold">Login</span>
       </router-link>
+
+      <div v-show="isLoggedIn">
+        <v-menu open-on-hover bottom offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <div v-bind="attrs" v-on="on">
+              <v-icon color="white"> mdi-account </v-icon>
+              <span class="white--text font-weight-bold">{{username}}</span>
+              <v-icon class="mr-2 ml-1" color="white">
+                mdi-arrow-down-drop-circle-outline
+              </v-icon>
+            </div>
+          </template>
+
+          <v-list>
+            <v-list-item-group>
+              <v-list-item>
+                <router-link to="/" style="color: #000">My Orders</router-link>
+              </v-list-item>
+              <v-list-item>
+                <span @click="logout">Logout</span>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+      </div>
 
       <!-- palet color -->
       <v-menu open-on-hover bottom offset-y>
@@ -99,7 +136,7 @@
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
-      <v-list-item>
+      <v-list-item v-show="!isLoggedIn">
         <v-list-item-content>
           <v-list-item-title class="d-flex justify-center">
             <router-link to="/">
@@ -115,10 +152,20 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
+
+      <v-list-item v-show="isLoggedIn" two-line>
+        <v-list-item-avatar>
+          <img src="https://lh3.googleusercontent.com/a-/AFdZucqhxzHOEpPOurZnAUhnXJwzM2TH9dlIUYLpcIGwSQ=s96-c-rg-br100" />
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>{{username}}</v-list-item-title>
+          <v-list-item-subtitle>Logged In</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
       <v-divider></v-divider>
       <v-list nav dense>
         <v-list-item-group>
-          <router-link to="/login">
+          <router-link to="/login" v-show="!isLoggedIn">
             <v-list-item class="mt-2">
               <v-list-item-icon>
                 <v-icon>mdi-login</v-icon>
@@ -171,15 +218,31 @@
             <v-list-item-icon>
               <v-icon>mdi-github</v-icon>
             </v-list-item-icon>
-
             <v-list-item-content>
               <v-list-item-title class="subtitle-1"
                 >Source Project</v-list-item-title
               >
             </v-list-item-content>
           </v-list-item>
+
+          <v-list-item class="mt-2">
+            <v-list-item-icon>
+              <v-icon>mdi-heart</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="subtitle-1"
+                >My Favorite</v-list-item-title
+              >
+            </v-list-item-content>
+          </v-list-item>
         </v-list-item-group>
       </v-list>
+
+      <template v-slot:append>
+        <div class="pa-2" v-show="isLoggedIn">
+          <v-btn block @click="logout"> Logout </v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
   </div>
 </template>
@@ -197,6 +260,7 @@ export default {
       drawer: false,
       group: null,
       selected: "",
+      username: '',
       palette: [
         [
           "#ffb7b7",
@@ -241,10 +305,29 @@ export default {
       ],
     };
   },
+  computed: {
+    isLoggedIn() {
+      return window.localStorage.getItem("token");
+    },
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch("logout").then(() => {
+        this.$router.push("/login");
+      });
+    },
+  },
+  created() {
+    this.username = localStorage.getItem('username');
+  }
 };
 </script>
 
 <style scoped>
+.navbar-main{
+margin-bottom: 50px;
+}
+
 .input-search-lg {
   width: 380px;
   max-height: 48px;
