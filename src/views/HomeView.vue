@@ -1,7 +1,7 @@
 <template>
   <div>
     <Navbar />
-
+    <router-view />
     <v-container>
       <v-row>
         <v-col lg="3" cols="12">
@@ -10,17 +10,33 @@
         <v-col lg="9" cols="12">
           <v-row>
             <!-- start items -->
-            <v-col lg="3" cols="6" v-for="book in books">
+            <v-col lg="3" cols="6" v-for="(book, index) in books" :key="index">
               <v-card class="mx-auto mt-5">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-img
-                      height="250"
-                      width="200"
-                      v-bind="attrs"
-                      v-on="on"
-                      :src="book.coverFileName"
-                    />
+                    <router-link
+                      :to="{
+                        name: 'bookItem',
+                        params: {
+                          title: book.title,
+                          author: book.author,
+                          category: book.category,
+                          price: book.price,
+                          coverFileName: book.coverFileName,
+                        },
+                      }"
+                    >
+                      <v-img
+                        height="250"
+                        width="200"
+                        v-bind="attrs"
+                        v-on="on"
+                        :src="
+                          `https://bookcart.azurewebsites.net/Upload/` +
+                          book.coverFileName
+                        "
+                      />
+                    </router-link>
                   </template>
                   <span>{{ book.title }}</span>
                 </v-tooltip>
@@ -37,7 +53,9 @@
                 </v-btn>
 
                 <v-card-title>
-                  <router-link to="/">{{ book.title }}</router-link>
+                  <router-link class="subtitle-2 title-text-book" to="/">{{
+                    book.title
+                  }}</router-link>
                 </v-card-title>
 
                 <v-card-text>
@@ -80,7 +98,7 @@ export default {
   data() {
     return {
       favoriteList: false,
-      books : '',
+      books: "",
     };
   },
   computed: {
@@ -94,10 +112,10 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch('allBook').then((res)=>{
-      this.books = res.data
-    })
-  }
+    this.$store.dispatch("allBook").then((res) => {
+      this.books = res.data;
+    });
+  },
 };
 </script>
 
@@ -106,5 +124,11 @@ export default {
   position: absolute;
   top: 5px;
   right: 5px;
+}
+.title-text-book {
+  height: 21px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>
