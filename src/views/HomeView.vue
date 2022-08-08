@@ -69,7 +69,6 @@
                     class="mx-3"
                     color="primary"
                     depressed
-                    @click="reserve"
                   >
                     <v-icon dense>mdi-cart</v-icon>
                     <span> Add to Cart </span>

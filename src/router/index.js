@@ -13,13 +13,18 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    children: [
-      {
-        path: '/book_details',
-        name: 'bookItem',
-        component: BookItem
-      }
-    ]
+    // children: [
+    //   {
+    //     path: '/book_details',
+    //     name: 'bookItem',
+    //     component: BookItem
+    //   }
+    // ]
+  },
+  {
+    path: '/book_details',
+    name: 'bookItem',
+    component: BookItem
   },
   {
     path: '/about',
