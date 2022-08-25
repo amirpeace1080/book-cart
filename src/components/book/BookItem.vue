@@ -39,11 +39,7 @@
                       <td class="subtitle-1">$ {{ price }}</td>
                     </tr>
                     <tr>
-                      <v-btn
-                        class="mt-4"
-                        color="primary"
-                        depressed
-                      >
+                      <v-btn class="mt-4" color="primary" depressed>
                         <v-icon dense>mdi-cart</v-icon>
                         <span> Add to Cart </span>
                       </v-btn>
@@ -65,15 +61,12 @@
             active-class="success"
             show-arrows
           >
-            <v-slide-item v-for="(book ,index) in books" :key="index">
-              <v-card
-                class="ma-4"
-                height="400"
-                width="210"
-                @click="toggle"
-              >
-
-              <v-tooltip bottom>
+            <v-slide-item
+              v-for="(book, index) in books.slice(0, 5)"
+              :key="index"
+            >
+              <v-card class="ma-4" height="400" width="210" @click="toggle">
+                <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <router-link
                       :to="{
@@ -99,9 +92,27 @@
                       />
                     </router-link>
                   </template>
-                  <span>hello</span>
+                  <span>{{ book.title }}</span>
                 </v-tooltip>
 
+                <v-card-title>
+                  <router-link class="subtitle-2 title-text-book" to="/">{{
+                    book.title
+                  }}</router-link>
+                </v-card-title>
+
+                <v-card-text>
+                  <div class="text-subtitle-1">$ {{ book.price }}</div>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-btn class="mx-3" color="primary" depressed>
+                    <v-icon dense>mdi-cart</v-icon>
+                    <span> Add to Cart </span>
+                  </v-btn>
+                </v-card-actions>
               </v-card>
             </v-slide-item>
           </v-slide-group>
@@ -131,14 +142,15 @@ export default {
   },
   created() {
     this.$store.dispatch("allBook").then((res) => {
-      // this.books = res.data;
       var arr = res.data;
 
-      // Getting a random array key
-      var rand = Math.floor(Math.random() * arr.length);
-
-      this.books = arr[rand]
-      console.log(this.books);
+      let randomNumbers = arr;
+      for (let i = 0; i <= 6; i++)
+        randomNumbers.push(Math.floor(Math.random() * arr.length));
+      randomNumbers = new Array(6)
+        .fill(0)
+        .map((v) => arr[Math.floor(Math.random() * arr.length)]);
+      this.books = randomNumbers;
     });
   },
 };
@@ -150,5 +162,11 @@ export default {
 }
 .title-td {
   font-weight: 700;
+}
+.title-text-book {
+  height: 21px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>
